@@ -32,7 +32,7 @@ function formatDate(date: Date) {
   }).format(date);
 }
 
-import { Search, FolderOpen, Upload } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default async function FilesPage({ searchParams }: FilesPageProps) {
@@ -49,7 +49,7 @@ export default async function FilesPage({ searchParams }: FilesPageProps) {
   }));
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <section>
         <div className="mb-4">
           <h3 className="text-xl font-bold text-zinc-900">Upload Baru</h3>
@@ -62,9 +62,9 @@ export default async function FilesPage({ searchParams }: FilesPageProps) {
 
       <section className="space-y-6">
         <div className="flex flex-col gap-4 border-t border-zinc-100 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+          <div className="min-w-0">
             <h3 className="text-xl font-bold text-zinc-900">File Saya</h3>
-            <p className="text-sm text-zinc-500">
+            <p className="break-words text-sm text-zinc-500">
               {files.length} file tersimpan {query ? ` ditemukan untuk "${query}"` : ""}
             </p>
           </div>

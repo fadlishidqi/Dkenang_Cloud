@@ -23,7 +23,7 @@ export function DashboardNav({
     <nav
       className={
         isHorizontal
-          ? "flex gap-2 overflow-x-auto text-sm text-zinc-500"
+          ? "-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 text-sm text-zinc-500 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           : "space-y-1 text-sm text-zinc-500"
       }
     >
@@ -36,7 +36,7 @@ export function DashboardNav({
         return (
           <Link
             key={item.href}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 transition ${
+            className={`flex shrink-0 items-center gap-2 rounded-md px-3 py-2 transition ${
               isHorizontal ? "whitespace-nowrap" : "w-full"
             } ${isActive ? "bg-zinc-100 text-zinc-900 font-medium shadow-sm" : "hover:bg-zinc-100 hover:text-zinc-900"}`}
             href={item.href}

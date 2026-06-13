@@ -1,7 +1,6 @@
 import { getDashboardCounts, getRecentFiles, getRecentNotes, getStorageUsage, getAuditLogs } from "@/lib/dashboard-data";
 import { RecentFileLink } from "./recent-file-link";
 import { ActivityLog } from "./activity-log";
-import { RealtimeSync } from "@/components/realtime-sync";
 import { FormattedDate } from "@/components/formatted-date";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { FolderOpen, PenLine, Database, ArrowUpRight } from "lucide-react";
@@ -45,16 +44,16 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map((item) => (
-          <Card key={item.label} className="border-zinc-200 shadow-sm transition hover:shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
+          <Card key={item.label} className="min-w-0 border-zinc-200 shadow-sm transition hover:shadow-md">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex min-w-0 items-center justify-between gap-3">
+                <div className="min-w-0">
                   <p className="text-sm font-semibold text-zinc-500">{item.label}</p>
-                  <p className="mt-1 text-2xl font-bold text-zinc-900">{item.value}</p>
+                  <p className="mt-1 break-words text-xl font-bold text-zinc-900 sm:text-2xl">{item.value}</p>
                 </div>
-                <div className={`flex size-12 items-center justify-center rounded-xl ${item.bg} ${item.color}`}>
+                <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl sm:size-12 ${item.bg} ${item.color}`}>
                   <item.icon className="size-6" />
                 </div>
               </div>
@@ -75,14 +74,14 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <ActivityLog initialLogs={logs.map(log => ({
           ...log,
           createdAt: log.createdAt.toISOString()
         }))} />
 
         <Card className="border-zinc-200 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 p-4 pb-4 sm:p-6 sm:pb-4">
             <CardTitle className="text-lg font-bold text-zinc-900">File Terbaru</CardTitle>
             <Link 
               href="/dashboard/files" 
@@ -91,7 +90,7 @@ export default async function DashboardPage() {
               Semua <ArrowUpRight className="size-3" />
             </Link>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <div className="space-y-1">
               {files.slice(0, 5).map((file) => (
                 <RecentFileLink
@@ -116,7 +115,7 @@ export default async function DashboardPage() {
         </Card>
 
         <Card className="border-zinc-200 shadow-sm lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 p-4 pb-4 sm:p-6 sm:pb-4">
             <CardTitle className="text-lg font-bold text-zinc-900">Catatan Terbaru</CardTitle>
             <Link 
               href="/dashboard/notes" 
@@ -125,8 +124,8 @@ export default async function DashboardPage() {
               Semua <ArrowUpRight className="size-3" />
             </Link>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {notes.slice(0, 6).map((note) => (
                 <Link
                   key={note.id}

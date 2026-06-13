@@ -2,12 +2,9 @@ import { getRecentNotes } from "@/lib/dashboard-data";
 import { NoteForm } from "./note-form";
 import { NoteCard } from "./note-card";
 import { RealtimeSync } from "@/components/realtime-sync";
-import { FormattedDate } from "@/components/formatted-date";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Search, Trash2, Pin, PenLine } from "lucide-react";
+import { Search, PenLine } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +20,11 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
   const notes = await getRecentNotes(query);
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
       <RealtimeSync />
-      <section className="space-y-6">
+      <section className="min-w-0 space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+          <div className="min-w-0">
             <h3 className="text-xl font-bold text-zinc-900">Catatan</h3>
             <p className="text-sm text-zinc-500">
               Kelola ide dan pengingat Anda.
@@ -44,7 +41,7 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
           </form>
         </div>
 
-        <div className="grid gap-3">
+        <div className="grid min-w-0 gap-3">
           {notes.map((note) => (
             <NoteCard 
               key={note.id} 
@@ -64,8 +61,8 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
         </div>
       </section>
 
-      <aside>
-        <Card className="sticky top-6 border-zinc-200 bg-white p-6 shadow-sm">
+      <aside className="min-w-0">
+        <Card className="border-zinc-200 bg-white p-4 shadow-sm sm:p-6 xl:sticky xl:top-6">
           <div className="mb-6">
             <h3 className="text-lg font-bold text-zinc-900">Tambah Catatan</h3>
             <p className="text-sm text-zinc-500">

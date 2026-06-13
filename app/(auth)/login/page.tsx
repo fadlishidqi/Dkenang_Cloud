@@ -10,15 +10,15 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-6 text-zinc-900">
+    <main className="flex min-h-dvh items-center justify-center bg-zinc-50 p-4 text-zinc-900 sm:p-6">
       <section className="w-full max-w-md">
-        <div className="bg-white p-8 rounded-2xl border border-zinc-200 shadow-xl">
-          <div className="mb-8">
-            <div className="size-12 rounded-xl bg-zinc-900 flex items-center justify-center text-white text-2xl font-bold mb-6">D</div>
+        <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-xl sm:p-8">
+          <div className="mb-6 sm:mb-8">
+            <div className="mb-5 flex size-11 items-center justify-center rounded-xl bg-zinc-900 text-xl font-bold text-white sm:mb-6 sm:size-12 sm:text-2xl">D</div>
             <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">
               DKenang
             </p>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            <h1 className="text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl">
               Personal Cloud & Notes
             </h1>
             <p className="mt-2 text-sm font-medium text-zinc-500">

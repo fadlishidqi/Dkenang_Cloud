@@ -50,9 +50,9 @@ export function NoteCard({ note }: NoteCardProps) {
 
   return (
     <>
-      <Card className="group relative flex flex-col overflow-hidden border-zinc-200 bg-white shadow-sm transition hover:shadow-md">
+      <Card className="group relative flex min-w-0 flex-col overflow-hidden border-zinc-200 bg-white shadow-sm transition hover:shadow-md">
         <div className="p-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <h4 className="truncate text-base font-bold text-zinc-900 group-hover:text-primary">
@@ -62,8 +62,8 @@ export function NoteCard({ note }: NoteCardProps) {
                   <Pin className="size-3.5 fill-primary text-primary rotate-45" />
                 )}
               </div>
-              <div className="mt-1 flex items-center gap-3">
-                <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
                   <FormattedDate date={note.updatedAt} />
                 </div>
                 {note.tags.length > 0 && (
@@ -80,7 +80,7 @@ export function NoteCard({ note }: NoteCardProps) {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex shrink-0 items-center gap-1 self-end sm:self-auto">
               <Button
                 size="icon"
                 variant="ghost"
@@ -122,7 +122,7 @@ export function NoteCard({ note }: NoteCardProps) {
           {isOpen ? (
             <div className="mt-3 border-t border-zinc-50 pt-3">
               <div
-                className="text-sm leading-relaxed text-zinc-600 prose prose-sm max-w-none"
+                className="prose prose-sm max-w-none break-words text-sm leading-relaxed text-zinc-600"
                 dangerouslySetInnerHTML={{ __html: note.contentHtml }}
               />
             </div>
@@ -142,7 +142,7 @@ export function NoteCard({ note }: NoteCardProps) {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Hapus Catatan</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="break-words">
               Apakah Anda yakin ingin menghapus catatan <strong>{note.title}</strong>? Tindakan ini tidak dapat dibatalkan.
             </DialogDescription>
           </DialogHeader>

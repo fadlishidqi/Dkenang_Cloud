@@ -12,7 +12,6 @@ import {
   FileCode, 
   Download, 
   Trash2, 
-  MoreVertical,
   Loader2,
   File
 } from "lucide-react";
@@ -88,12 +87,12 @@ function FileCardItem({ file }: { file: FileCard }) {
 
   return (
     <>
-      <Card className="group relative flex flex-col border-zinc-200 bg-white p-4 shadow-sm transition hover:shadow-md">
-        <div className="flex items-start justify-between">
+      <Card className="group relative flex min-w-0 flex-col border-zinc-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+        <div className="flex items-start justify-between gap-3">
           <div className={`flex size-12 items-center justify-center rounded-xl border ${tone}`}>
             <FileIcon mime={file.mimeType} className="size-6" />
           </div>
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex shrink-0 gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
             <Button
               size="icon"
               variant="ghost"
@@ -121,7 +120,7 @@ function FileCardItem({ file }: { file: FileCard }) {
           <p className="truncate text-sm font-bold text-zinc-900" title={file.fileName}>
             {file.fileName}
           </p>
-          <div className="mt-1 flex items-center gap-2 text-xs font-medium text-zinc-500">
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-zinc-500">
             <span>{file.sizeText}</span>
             <span>•</span>
             <span>{file.dateText}</span>
@@ -135,7 +134,7 @@ function FileCardItem({ file }: { file: FileCard }) {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Hapus File</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="break-words">
               Apakah Anda yakin ingin menghapus <strong>{file.fileName}</strong>? Tindakan ini tidak dapat dibatalkan.
             </DialogDescription>
           </DialogHeader>
@@ -176,7 +175,7 @@ export function FileGrid({ files }: { files: FileCard[] }) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {files.map((file) => (
         <FileCardItem key={file.id} file={file} />
       ))}

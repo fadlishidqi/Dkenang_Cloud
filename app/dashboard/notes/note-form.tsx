@@ -16,7 +16,7 @@ export function NoteForm() {
   );
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="min-w-0 space-y-4">
       <div className="space-y-2">
         <label htmlFor="title" className="text-sm font-semibold text-zinc-700">Judul</label>
         <Input
@@ -46,10 +46,10 @@ export function NoteForm() {
           placeholder="kerja, pribadi, inspirasi..."
         />
       </div>
-      <div className="flex items-center gap-2 py-2">
+      <div className="flex items-start gap-2 py-2">
         <input
           id="isPinned"
-          className="size-4 rounded border-zinc-300 text-primary focus:ring-primary"
+          className="mt-0.5 size-4 shrink-0 rounded border-zinc-300 text-primary focus:ring-primary"
           name="isPinned"
           type="checkbox"
         />

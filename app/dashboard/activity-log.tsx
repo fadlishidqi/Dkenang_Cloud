@@ -22,10 +22,10 @@ export function ActivityLog({ initialLogs }: { initialLogs: Log[] }) {
   const hasMore = initialLogs.length > displayCount;
 
   return (
-    <Card className="border-zinc-200 shadow-sm flex flex-col h-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+    <Card className="flex h-full min-w-0 flex-col border-zinc-200 shadow-sm">
+      <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 p-4 pb-4 sm:items-center sm:p-6 sm:pb-4">
         <CardTitle className="text-lg font-bold text-zinc-900">Log Aktivitas</CardTitle>
-        <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+        <div className="flex shrink-0 items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -33,7 +33,7 @@ export function ActivityLog({ initialLogs }: { initialLogs: Log[] }) {
           Live Tracking
         </div>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
+      <CardContent className="flex flex-1 flex-col p-4 pt-0 sm:p-6 sm:pt-0">
         <RealtimeSync interval={3000} />
         <div className="space-y-4 flex-1">
           {visibleLogs.map((log) => (
@@ -42,10 +42,10 @@ export function ActivityLog({ initialLogs }: { initialLogs: Log[] }) {
                 {log.username.substring(0, 2)}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-zinc-900">
+                <p className="break-words text-sm font-bold text-zinc-900">
                   {log.username} <span className="font-normal text-zinc-500">melakukan</span> {log.action}
                 </p>
-                <p className="text-xs text-zinc-600 truncate italic">"{log.target}"</p>
+                <p className="truncate text-xs italic text-zinc-600">&quot;{log.target}&quot;</p>
                 <div className="mt-1 flex items-center gap-1.5 text-[10px] font-medium text-zinc-400">
                   <Clock className="size-2.5" />
                   <FormattedDate date={log.createdAt} showTime />

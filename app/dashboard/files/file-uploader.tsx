@@ -25,7 +25,6 @@ function formatBytes(bytes: number) {
 }
 
 import { UploadCloud, File, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 /** PUT the file to R2 with progress reporting. */
 function putToR2(
@@ -148,7 +147,7 @@ export function FileUploader() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div
         role="button"
         tabIndex={0}
@@ -165,7 +164,7 @@ export function FileUploader() {
         }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={onDrop}
-        className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-6 py-12 text-center transition-all ${
+        className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-4 py-10 text-center transition-all sm:px-6 sm:py-12 ${
           isDragging
             ? "border-primary bg-primary/5 ring-4 ring-primary/5"
             : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-50"
@@ -199,9 +198,9 @@ export function FileUploader() {
           {items.map((item) => (
             <li
               key={item.id}
-              className="group relative rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
+              className="group relative min-w-0 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
             >
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex min-w-0 items-center justify-between gap-3 sm:gap-4">
                 <div className="flex min-w-0 items-center gap-3">
                   <div className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${
                     item.status === "error" ? "bg-red-50 text-red-600" : "bg-zinc-50 text-zinc-600"
@@ -223,7 +222,7 @@ export function FileUploader() {
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="shrink-0 text-right">
                   <span className={`text-xs font-bold uppercase tracking-wider ${
                     item.status === "error" ? "text-red-600" : "text-zinc-500"
                   }`}>

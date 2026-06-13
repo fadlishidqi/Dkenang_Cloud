@@ -33,7 +33,7 @@ export function RecentFileLink({
     <button
       onClick={open}
       disabled={busy}
-      className="group flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left transition hover:bg-zinc-100 hover:border-zinc-200 disabled:opacity-60"
+      className="group flex w-full min-w-0 items-center gap-3 rounded-lg border border-transparent px-2 py-2 text-left transition hover:bg-zinc-100 hover:border-zinc-200 disabled:opacity-60 sm:px-3"
     >
       <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-50 text-zinc-400 group-hover:bg-white group-hover:text-primary transition-colors">
         {busy ? <Loader2 className="size-4 animate-spin" /> : <File className="size-4" />}
