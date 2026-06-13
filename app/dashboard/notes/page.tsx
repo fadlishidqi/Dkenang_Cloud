@@ -2,6 +2,8 @@ import { deleteNoteAction } from "@/app/actions/notes";
 import { getRecentNotes } from "@/lib/dashboard-data";
 import { NoteForm } from "./note-form";
 
+export const dynamic = "force-dynamic";
+
 type NotesPageProps = {
   searchParams?: Promise<{
     q?: string;

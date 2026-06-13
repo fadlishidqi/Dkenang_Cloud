@@ -20,11 +20,12 @@ function createAdapter() {
     user: decodeURIComponent(url.username),
     password: decodeURIComponent(url.password),
     database: url.pathname.replace(/^\//, ""),
-    // Serverless-friendly pool: keep few connections so many Vercel
-    // instances don't exhaust the shared-hosting connection limit.
-    connectionLimit: 5,
-    idleTimeout: 30,
-    acquireTimeout: 20000,
+    // Serverless-friendly pool: Hostinger shared MySQL caps max_user_connections
+    // very low, so keep each instance tiny and release idle connections fast.
+    connectionLimit: 2,
+    minimumIdle: 0,
+    idleTimeout: 10,
+    acquireTimeout: 10000,
   });
 }
 

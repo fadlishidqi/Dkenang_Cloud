@@ -1,6 +1,8 @@
 import { getDashboardCounts, getRecentFiles, getRecentNotes } from "@/lib/dashboard-data";
 import { RecentFileLink } from "./recent-file-link";
 
+export const dynamic = "force-dynamic";
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("id-ID", {
     day: "2-digit",

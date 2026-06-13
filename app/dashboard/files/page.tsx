@@ -2,6 +2,8 @@ import { getRecentFiles } from "@/lib/dashboard-data";
 import { FileGrid, type FileCard } from "./file-grid";
 import { FileUploader } from "./file-uploader";
 
+export const dynamic = "force-dynamic";
+
 type FilesPageProps = {
   searchParams?: Promise<{
     q?: string;
