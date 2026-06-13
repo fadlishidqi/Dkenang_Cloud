@@ -73,3 +73,15 @@ model NoteTag {
   @@index([tagId])
   @@map("note_tags")
 }
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  username  String   @db.VarChar(64)
+  action    String   @db.VarChar(127)
+  target    String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([username])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

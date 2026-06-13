@@ -24,6 +24,9 @@ function formatBytes(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
+import { UploadCloud, File, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 /** PUT the file to R2 with progress reporting. */
 function putToR2(
   url: string,
@@ -145,7 +148,7 @@ export function FileUploader() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div
         role="button"
         tabIndex={0}
@@ -162,33 +165,23 @@ export function FileUploader() {
         }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={onDrop}
-        className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition ${
+        className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-6 py-12 text-center transition-all ${
           isDragging
-            ? "border-cyan-300 bg-cyan-300/10"
-            : "border-white/15 bg-black/20 hover:border-cyan-300/50 hover:bg-white/5"
+            ? "border-primary bg-primary/5 ring-4 ring-primary/5"
+            : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-50"
         }`}
       >
-        <svg
-          aria-hidden
-          className="h-10 w-10 text-cyan-200"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 16.5V6m0 0L8.25 9.75M12 6l3.75 3.75M4.5 16.5v1.875c0 1.036.84 1.875 1.875 1.875h11.25c1.035 0 1.875-.84 1.875-1.875V16.5"
-          />
-        </svg>
-        <p className="text-sm font-medium text-white">
-          Tarik &amp; lepas file di sini
-        </p>
-        <p className="text-xs text-zinc-400">
-          atau <span className="text-cyan-200">pilih dari perangkat</span> ·
-          maks 500 MB
-        </p>
+        <div className="inline-flex size-14 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-zinc-200">
+          <UploadCloud className={`size-7 ${isDragging ? "text-primary animate-bounce" : "text-zinc-400"}`} />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-zinc-900">
+            Tarik & lepas file di sini
+          </p>
+          <p className="mt-1 text-xs font-medium text-zinc-500">
+            atau <span className="text-primary font-bold">pilih dari perangkat</span> · maks 500 MB
+          </p>
+        </div>
         <input
           ref={inputRef}
           type="file"
@@ -201,44 +194,70 @@ export function FileUploader() {
         />
       </div>
 
-      {items.length > 0 ? (
-        <ul className="space-y-2">
+      {items.length > 0 && (
+        <ul className="grid gap-3">
           {items.map((item) => (
             <li
               key={item.id}
-              className="rounded-lg border border-white/10 bg-black/20 px-3 py-2.5"
+              className="group relative rounded-xl border border-zinc-200 bg-white p-4 shadow-sm"
             >
-              <div className="flex items-center justify-between gap-3">
-                <span className="min-w-0 flex-1 truncate text-sm text-white">
-                  {item.name}
-                </span>
-                <span className="shrink-0 text-xs text-zinc-400">
-                  {item.status === "error"
-                    ? "Gagal"
-                    : item.status === "done"
-                      ? "Selesai"
-                      : `${item.progress}%`}
-                </span>
-              </div>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    item.status === "error"
-                      ? "bg-red-400"
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${
+                    item.status === "error" ? "bg-red-50 text-red-600" : "bg-zinc-50 text-zinc-600"
+                  }`}>
+                    {item.status === "uploading" ? (
+                      <Loader2 className="size-5 animate-spin" />
+                    ) : item.status === "error" ? (
+                      <AlertCircle className="size-5" />
+                    ) : (
+                      <CheckCircle2 className="size-5 text-emerald-600" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-zinc-900">
+                      {item.name}
+                    </p>
+                    <p className="text-xs font-medium text-zinc-500">
+                      {formatBytes(item.size)}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className={`text-xs font-bold uppercase tracking-wider ${
+                    item.status === "error" ? "text-red-600" : "text-zinc-500"
+                  }`}>
+                    {item.status === "error"
+                      ? "Gagal"
                       : item.status === "done"
-                        ? "bg-emerald-400"
-                        : "bg-cyan-300"
+                        ? "Selesai"
+                        : `${item.progress}%`}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    item.status === "error"
+                      ? "bg-red-500"
+                      : item.status === "done"
+                        ? "bg-emerald-500"
+                        : "bg-primary"
                   }`}
                   style={{ width: `${item.status === "error" ? 100 : item.progress}%` }}
                 />
               </div>
-              <p className="mt-1 text-xs text-zinc-500">
-                {item.error ?? formatBytes(item.size)}
-              </p>
+              
+              {item.error && (
+                <p className="mt-2 text-xs font-medium text-red-600">
+                  {item.error}
+                </p>
+              )}
             </li>
           ))}
         </ul>
-      ) : null}
+      )}
     </div>
   );
 }

@@ -32,6 +32,9 @@ function formatDate(date: Date) {
   }).format(date);
 }
 
+import { Search, FolderOpen, Upload } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
 export default async function FilesPage({ searchParams }: FilesPageProps) {
   const params = await searchParams;
   const query = params?.q?.trim() ?? "";
@@ -46,37 +49,36 @@ export default async function FilesPage({ searchParams }: FilesPageProps) {
   }));
 
   return (
-    <div className="mt-8 space-y-6">
-      <section className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl sm:p-5">
-        <h3 className="text-lg font-semibold text-white">Upload File</h3>
-        <p className="mt-1 text-sm text-zinc-400">
-          File disimpan aman di Cloudflare R2.
-        </p>
-        <div className="mt-4">
-          <FileUploader />
+    <div className="space-y-8">
+      <section>
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-zinc-900">Upload Baru</h3>
+          <p className="text-sm text-zinc-500">
+            File disimpan aman di Cloudflare R2.
+          </p>
         </div>
+        <FileUploader />
       </section>
 
-      <section>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 border-t border-zinc-100 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-white">File Saya</h3>
-            <p className="mt-1 text-sm text-zinc-400">
-              {files.length} file{query ? ` untuk "${query}"` : ""}
+            <h3 className="text-xl font-bold text-zinc-900">File Saya</h3>
+            <p className="text-sm text-zinc-500">
+              {files.length} file tersimpan {query ? ` ditemukan untuk "${query}"` : ""}
             </p>
           </div>
-          <form action="/dashboard/files" className="w-full sm:max-w-xs">
-            <input
-              className="h-10 w-full rounded-md border border-white/10 bg-black/20 px-3 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-cyan-300/60"
+          <form action="/dashboard/files" className="relative w-full sm:max-w-xs">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
+            <Input
+              className="pl-9 bg-white border-zinc-200"
               defaultValue={query}
               name="q"
               placeholder="Cari file..."
             />
           </form>
         </div>
-        <div className="mt-5">
-          <FileGrid files={cards} />
-        </div>
+        <FileGrid files={cards} />
       </section>
     </div>
   );

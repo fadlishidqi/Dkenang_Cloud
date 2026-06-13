@@ -1,8 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/lib/auth/session";
 import { requireAdminSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
+
+async function logActivity(action: string, target: string) {
+  const session = await getSession();
+  if (session?.username) {
+    await prisma.auditLog.create({
+      data: {
+        username: session.username,
+        action,
+        target,
+      },
+    });
+  }
+}
 import {
   buildStorageKey,
   createDownloadUrl,
@@ -87,6 +101,8 @@ export async function confirmUploadAction(
     },
   });
 
+  await logActivity("Upload File", fileName);
+
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/files");
   return { ok: true };
@@ -142,6 +158,8 @@ export async function deleteFileAction(formData: FormData) {
   }
 
   await prisma.file.delete({ where: { id } });
+  await logActivity("Hapus File", file.fileName);
+  
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/files");
 }

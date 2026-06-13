@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { LayoutDashboard, FolderOpen, PenLine } from "lucide-react";
+
 const items = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/files", label: "Files" },
-  { href: "/dashboard/notes", label: "Notes" },
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/files", label: "Files", icon: FolderOpen },
+  { href: "/dashboard/notes", label: "Notes", icon: PenLine },
 ];
 
 export function DashboardNav({
@@ -21,8 +23,8 @@ export function DashboardNav({
     <nav
       className={
         isHorizontal
-          ? "flex gap-2 overflow-x-auto text-sm text-zinc-300"
-          : "mt-10 space-y-2 text-sm text-zinc-300"
+          ? "flex gap-2 overflow-x-auto text-sm text-zinc-500"
+          : "space-y-1 text-sm text-zinc-500"
       }
     >
       {items.map((item) => {
@@ -34,11 +36,12 @@ export function DashboardNav({
         return (
           <Link
             key={item.href}
-            className={`rounded-md px-3 py-2 transition ${
-              isHorizontal ? "whitespace-nowrap" : "block"
-            } ${isActive ? "bg-white/10 text-white" : "hover:bg-white/10"}`}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 transition ${
+              isHorizontal ? "whitespace-nowrap" : "w-full"
+            } ${isActive ? "bg-zinc-100 text-zinc-900 font-medium shadow-sm" : "hover:bg-zinc-100 hover:text-zinc-900"}`}
             href={item.href}
           >
+            <item.icon className="size-4" />
             {item.label}
           </Link>
         );

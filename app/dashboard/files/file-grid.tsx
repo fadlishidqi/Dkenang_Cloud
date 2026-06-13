@@ -3,6 +3,29 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteFileAction, getFileUrlAction } from "@/app/actions/files";
+import { 
+  FileText, 
+  Image as ImageIcon, 
+  Video, 
+  Music, 
+  FileArchive, 
+  FileCode, 
+  Download, 
+  Trash2, 
+  MoreVertical,
+  Loader2,
+  File
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export type FileCard = {
   id: string;
@@ -12,33 +35,40 @@ export type FileCard = {
   dateText: string;
 };
 
-function fileKind(mime: string): { label: string; tone: string } {
-  if (mime.startsWith("image/")) return { label: "IMG", tone: "bg-pink-400/20 text-pink-200" };
-  if (mime.startsWith("video/")) return { label: "VID", tone: "bg-purple-400/20 text-purple-200" };
-  if (mime.startsWith("audio/")) return { label: "AUD", tone: "bg-amber-400/20 text-amber-200" };
-  if (mime === "application/pdf") return { label: "PDF", tone: "bg-red-400/20 text-red-200" };
-  if (mime.includes("word") || mime.includes("document"))
-    return { label: "DOC", tone: "bg-blue-400/20 text-blue-200" };
-  if (mime.includes("sheet") || mime.includes("excel") || mime === "text/csv")
-    return { label: "XLS", tone: "bg-emerald-400/20 text-emerald-200" };
-  if (mime.includes("zip") || mime.includes("rar") || mime.includes("compressed"))
-    return { label: "ZIP", tone: "bg-yellow-400/20 text-yellow-200" };
-  if (mime.startsWith("text/")) return { label: "TXT", tone: "bg-zinc-400/20 text-zinc-200" };
-  return { label: "FILE", tone: "bg-cyan-400/20 text-cyan-200" };
+function FileIcon({ mime, className }: { mime: string; className?: string }) {
+  if (mime.startsWith("image/")) return <ImageIcon className={className} />;
+  if (mime.startsWith("video/")) return <Video className={className} />;
+  if (mime.startsWith("audio/")) return <Music className={className} />;
+  if (mime === "application/pdf") return <FileText className={className} />;
+  if (mime.includes("word") || mime.includes("document")) return <FileText className={className} />;
+  if (mime.includes("sheet") || mime.includes("excel") || mime === "text/csv") return <FileText className={className} />;
+  if (mime.includes("zip") || mime.includes("rar") || mime.includes("compressed")) return <FileArchive className={className} />;
+  if (mime.startsWith("text/")) return <FileCode className={className} />;
+  return <File className={className} />;
+}
+
+function fileTone(mime: string): string {
+  if (mime.startsWith("image/")) return "bg-blue-50 text-blue-600 border-blue-100";
+  if (mime.startsWith("video/")) return "bg-purple-50 text-purple-600 border-purple-100";
+  if (mime.startsWith("audio/")) return "bg-amber-50 text-amber-600 border-amber-100";
+  if (mime === "application/pdf") return "bg-red-50 text-red-600 border-red-100";
+  if (mime.includes("zip") || mime.includes("rar")) return "bg-orange-50 text-orange-600 border-orange-100";
+  return "bg-zinc-50 text-zinc-600 border-zinc-100";
 }
 
 function FileCardItem({ file }: { file: FileCard }) {
   const router = useRouter();
-  const kind = fileKind(file.mimeType);
-  const [busy, setBusy] = useState<"open" | null>(null);
+  const tone = fileTone(file.mimeType);
+  const [isOpening, setIsOpening] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, startDelete] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  async function open() {
-    setBusy("open");
+  async function handleDownload() {
+    setIsOpening(true);
     setError(null);
     const result = await getFileUrlAction(file.id);
-    setBusy(null);
+    setIsOpening(false);
     if (result.ok && result.url) {
       window.open(result.url, "_blank", "noopener,noreferrer");
     } else {
@@ -46,64 +76,107 @@ function FileCardItem({ file }: { file: FileCard }) {
     }
   }
 
-  function remove() {
-    if (!window.confirm(`Hapus "${file.fileName}"?`)) return;
+  function confirmDelete() {
     startDelete(async () => {
       const formData = new FormData();
       formData.set("id", file.id);
       await deleteFileAction(formData);
+      setShowDeleteDialog(false);
       router.refresh();
     });
   }
 
   return (
-    <div className="group flex flex-col rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-300/40 hover:bg-white/10">
-      <div className="flex items-start justify-between">
-        <span
-          className={`inline-flex h-11 w-11 items-center justify-center rounded-lg text-xs font-bold ${kind.tone}`}
-        >
-          {kind.label}
-        </span>
-        <button
-          onClick={remove}
-          disabled={isDeleting}
-          title="Hapus"
-          className="rounded-md p-1.5 text-zinc-500 opacity-0 transition hover:bg-red-500/10 hover:text-red-300 focus:opacity-100 group-hover:opacity-100 disabled:opacity-50"
-        >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 7.5h12M9.5 7.5V6a1.5 1.5 0 011.5-1.5h2A1.5 1.5 0 0114.5 6v1.5m-7 0 .6 11A1.5 1.5 0 0 0 9.6 20h4.8a1.5 1.5 0 0 0 1.5-1.4l.6-11" />
-          </svg>
-        </button>
-      </div>
-      <button
-        onClick={open}
-        disabled={busy === "open"}
-        className="mt-3 text-left"
-        title={file.fileName}
-      >
-        <p className="truncate text-sm font-medium text-white group-hover:text-cyan-100">
-          {file.fileName}
-        </p>
-      </button>
-      <p className="mt-1 text-xs text-zinc-500">
-        {busy === "open" ? "Menyiapkan..." : `${file.sizeText} · ${file.dateText}`}
-      </p>
-      {error ? <p className="mt-1 text-xs text-red-300">{error}</p> : null}
-    </div>
+    <>
+      <Card className="group relative flex flex-col border-zinc-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+        <div className="flex items-start justify-between">
+          <div className={`flex size-12 items-center justify-center rounded-xl border ${tone}`}>
+            <FileIcon mime={file.mimeType} className="size-6" />
+          </div>
+          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-8 text-zinc-400 hover:text-zinc-900"
+              onClick={handleDownload}
+              disabled={isOpening}
+              title="Download"
+            >
+              {isOpening ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-8 text-zinc-400 hover:text-destructive hover:bg-destructive/10"
+              onClick={() => setShowDeleteDialog(true)}
+              disabled={isDeleting}
+              title="Hapus"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-4 min-w-0">
+          <p className="truncate text-sm font-bold text-zinc-900" title={file.fileName}>
+            {file.fileName}
+          </p>
+          <div className="mt-1 flex items-center gap-2 text-xs font-medium text-zinc-500">
+            <span>{file.sizeText}</span>
+            <span>•</span>
+            <span>{file.dateText}</span>
+          </div>
+        </div>
+
+        {error && <p className="mt-2 text-xs font-medium text-destructive">{error}</p>}
+      </Card>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Hapus File</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin menghapus <strong>{file.fileName}</strong>? Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Menghapus..." : "Hapus File"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
 export function FileGrid({ files }: { files: FileCard[] }) {
   if (files.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/10 px-4 py-16 text-center text-sm text-zinc-400">
-        Belum ada file. Unggah file pertama Anda di atas.
+      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 px-4 py-16 text-center">
+        <div className="inline-flex size-12 items-center justify-center rounded-full bg-white shadow-sm mb-4">
+          <File className="size-6 text-zinc-400" />
+        </div>
+        <p className="text-sm font-medium text-zinc-500">
+          Belum ada file. Unggah file pertama Anda di atas.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {files.map((file) => (
         <FileCardItem key={file.id} file={file} />
       ))}

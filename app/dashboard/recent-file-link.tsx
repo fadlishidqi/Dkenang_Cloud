@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { getFileUrlAction } from "@/app/actions/files";
 
+import { File, Loader2 } from "lucide-react";
+
 export function RecentFileLink({
   id,
   fileName,
@@ -10,7 +12,7 @@ export function RecentFileLink({
 }: {
   id: string;
   fileName: string;
-  meta: string;
+  meta: React.ReactNode;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,12 +33,19 @@ export function RecentFileLink({
     <button
       onClick={open}
       disabled={busy}
-      className="block w-full rounded-md border border-white/10 bg-black/20 px-3 py-3 text-left transition hover:bg-black/30 disabled:opacity-60"
+      className="group flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left transition hover:bg-zinc-100 hover:border-zinc-200 disabled:opacity-60"
     >
-      <p className="truncate text-sm font-medium text-white">{fileName}</p>
-      <p className="mt-1 text-xs text-zinc-400">
-        {busy ? "Menyiapkan..." : error ?? meta}
-      </p>
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-50 text-zinc-400 group-hover:bg-white group-hover:text-primary transition-colors">
+        {busy ? <Loader2 className="size-4 animate-spin" /> : <File className="size-4" />}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-bold text-zinc-900 group-hover:text-primary transition-colors">
+          {fileName}
+        </p>
+        <p className="truncate text-[11px] font-medium text-zinc-500">
+          {busy ? "Menyiapkan..." : error ?? meta}
+        </p>
+      </div>
     </button>
   );
 }

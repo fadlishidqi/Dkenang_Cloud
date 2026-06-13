@@ -1,12 +1,26 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/lib/auth/session";
 import { requireAdminSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 
 export type NoteActionState = {
   error?: string;
 };
+
+async function logActivity(action: string, target: string) {
+  const session = await getSession();
+  if (session?.username) {
+    await prisma.auditLog.create({
+      data: {
+        username: session.username,
+        action,
+        target,
+      },
+    });
+  }
+}
 
 function toSafeHtml(value: string) {
   return value
@@ -54,6 +68,8 @@ export async function createNoteAction(
     },
   });
 
+  await logActivity("Buat Catatan", title);
+
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/notes");
   return {};
@@ -65,7 +81,11 @@ export async function deleteNoteAction(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 
   if (id) {
+    const note = await prisma.note.findUnique({ where: { id } });
     await prisma.note.delete({ where: { id } });
+    if (note) {
+      await logActivity("Hapus Catatan", note.title);
+    }
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/notes");
   }

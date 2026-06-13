@@ -1,6 +1,13 @@
-import { deleteNoteAction } from "@/app/actions/notes";
 import { getRecentNotes } from "@/lib/dashboard-data";
 import { NoteForm } from "./note-form";
+import { NoteCard } from "./note-card";
+import { RealtimeSync } from "@/components/realtime-sync";
+import { FormattedDate } from "@/components/formatted-date";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Search, Trash2, Pin, PenLine } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -10,98 +17,63 @@ type NotesPageProps = {
   }>;
 };
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
 export default async function NotesPage({ searchParams }: NotesPageProps) {
   const params = await searchParams;
   const query = params?.q?.trim() ?? "";
   const notes = await getRecentNotes(query);
 
   return (
-    <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
-      <section>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
+      <RealtimeSync />
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-white">Notes</h3>
-            <p className="mt-1 text-sm text-zinc-400">
-              Catatan pribadi dengan pin dan tag pencarian.
+            <h3 className="text-xl font-bold text-zinc-900">Catatan</h3>
+            <p className="text-sm text-zinc-500">
+              Kelola ide dan pengingat Anda.
             </p>
           </div>
-          <form action="/dashboard/notes" className="w-full sm:max-w-xs">
-            <input
-              className="h-10 w-full rounded-md border border-white/10 bg-black/20 px-3 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-cyan-300/60"
+          <form action="/dashboard/notes" className="relative w-full sm:max-w-xs">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
+            <Input
+              className="pl-9 bg-white border-zinc-200"
               defaultValue={query}
               name="q"
               placeholder="Cari catatan..."
             />
           </form>
         </div>
-        <div className="mt-5 grid gap-4">
+
+        <div className="grid gap-3">
           {notes.map((note) => (
-            <article
-              className="rounded-lg border border-white/10 bg-white/10 p-5 backdrop-blur-xl"
-              key={note.id}
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="text-lg font-semibold text-white">{note.title}</h4>
-                    {note.isPinned ? (
-                      <span className="rounded-md border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-xs text-cyan-100">
-                        Pinned
-                      </span>
-                    ) : null}
-                  </div>
-                  <p className="mt-1 text-xs text-zinc-500">
-                    Updated {formatDate(note.updatedAt)}
-                  </p>
-                </div>
-                <form action={deleteNoteAction}>
-                  <input name="id" type="hidden" value={note.id} />
-                  <button className="text-sm text-red-200 hover:text-red-100">Delete</button>
-                </form>
-              </div>
-              <div
-                className="mt-4 text-sm leading-6 text-zinc-300"
-                dangerouslySetInnerHTML={{ __html: note.contentHtml }}
-              />
-              {note.tags.length > 0 ? (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {note.tags.map(({ tag }) => (
-                    <span
-                      className="rounded-md border border-white/10 bg-black/20 px-2 py-1 text-xs text-zinc-300"
-                      key={tag.id}
-                    >
-                      {tag.name}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </article>
+            <NoteCard 
+              key={note.id} 
+              note={note} 
+            />
           ))}
-          {notes.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-white/10 px-4 py-10 text-center text-sm text-zinc-400">
-              Catatan tidak ditemukan.
-            </p>
-          ) : null}
+          {notes.length === 0 && (
+            <div className="col-span-full rounded-xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 px-4 py-16 text-center">
+              <div className="inline-flex size-12 items-center justify-center rounded-full bg-white shadow-sm mb-4">
+                <PenLine className="size-6 text-zinc-400" />
+              </div>
+              <p className="text-sm font-medium text-zinc-500">
+                Belum ada catatan. Mulai tulis ide Anda!
+              </p>
+            </div>
+          )}
         </div>
       </section>
-      <aside className="rounded-lg border border-white/10 bg-white/10 p-5 backdrop-blur-xl">
-        <h3 className="text-lg font-semibold text-white">Tambah Catatan</h3>
-        <p className="mt-1 text-sm text-zinc-400">
-          Tulis catatan cepat dan tambahkan tag bila perlu.
-        </p>
-        <div className="mt-5">
+
+      <aside>
+        <Card className="sticky top-6 border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-zinc-900">Tambah Catatan</h3>
+            <p className="text-sm text-zinc-500">
+              Simpan pemikiran Anda dengan cepat.
+            </p>
+          </div>
           <NoteForm />
-        </div>
+        </Card>
       </aside>
     </div>
   );
