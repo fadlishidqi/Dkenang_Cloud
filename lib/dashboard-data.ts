@@ -17,8 +17,8 @@ export async function getRecentFiles(query = "") {
     where: query
       ? {
           OR: [
-            { fileName: { contains: query } },
-            { mimeType: { contains: query } },
+            { fileName: { contains: query, mode: "insensitive" } },
+            { mimeType: { contains: query, mode: "insensitive" } },
           ],
         }
       : undefined,
@@ -33,9 +33,9 @@ export async function getRecentNotes(query = "") {
     where: query
       ? {
           OR: [
-            { title: { contains: query } },
-            { contentHtml: { contains: query } },
-            { tags: { some: { tag: { name: { contains: query } } } } },
+            { title: { contains: query, mode: "insensitive" } },
+            { contentHtml: { contains: query, mode: "insensitive" } },
+            { tags: { some: { tag: { name: { contains: query, mode: "insensitive" } } } } },
           ],
         }
       : undefined,

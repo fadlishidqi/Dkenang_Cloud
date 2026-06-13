@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model Folder {
@@ -43,7 +43,7 @@ model File {
 model Note {
   id          String    @id @default(cuid())
   title       String    @db.VarChar(255)
-  contentHtml String    @map("content_html") @db.LongText
+  contentHtml String    @map("content_html") @db.Text
   isPinned    Boolean   @default(false) @map("is_pinned")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
