@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Folder {
+  id        String   @id @default(cuid())
+  parentId  String?  @map("parent_id")
+  name      String   @db.VarChar(191)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  parent   Folder?  @relation("FolderTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Folder[] @relation("FolderTree")
+  files    File[]
+
+  @@index([parentId])
+  @@index([name])
+  @@map("folders")
+}
+
+model File {
+  id         String   @id @default(cuid())
+  folderId   String?  @map("folder_id")
+  fileName   String   @map("file_name") @db.VarChar(255)
+  fileUrl    String   @map("file_url") @db.Text
+  storageKey String?  @map("storage_key") @db.VarChar(512)
+  sizeBytes  BigInt   @map("size_bytes")
+  mimeType   String   @map("mime_type") @db.VarChar(127)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  folder Folder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  @@index([folderId])
+  @@index([fileName])
+  @@index([mimeType])
+  @@map("files")
+}
+
+model Note {
+  id          String    @id @default(cuid())
+  title       String    @db.VarChar(255)
+  contentHtml String    @map("content_html") @db.LongText
+  isPinned    Boolean   @default(false) @map("is_pinned")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  tags        NoteTag[]
+
+  @@index([title])
+  @@index([isPinned, updatedAt])
+  @@map("notes")
+}
+
+model Tag {
+  id    String    @id @default(cuid())
+  name  String    @unique @db.VarChar(64)
+  notes NoteTag[]
+
+  @@map("tags")
+}
+
+model NoteTag {
+  noteId String @map("note_id")
+  tagId  String @map("tag_id")
+
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([noteId, tagId])
+  @@index([tagId])
+  @@map("note_tags")
+}
