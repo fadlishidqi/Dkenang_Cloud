@@ -1,4 +1,6 @@
 import { logoutAction } from "@/app/actions/login";
+import { NotificationWatcher } from "@/components/notification-watcher";
+import { Toaster } from "@/components/ui/toaster";
 import { getSession } from "@/lib/auth/session";
 import { DashboardNav } from "./nav";
 import { RefreshButton } from "./refresh-button";
@@ -12,6 +14,8 @@ export default async function DashboardLayout({
 
   return (
     <main className="min-h-dvh overflow-x-hidden bg-zinc-50/50 text-zinc-900">
+      <NotificationWatcher />
+      <Toaster />
       <div className="flex min-h-dvh">
         <aside className="hidden w-64 border-r border-zinc-200 bg-white p-6 lg:block">
           <div className="flex items-center gap-2 px-2">
