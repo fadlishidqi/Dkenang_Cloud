@@ -178,7 +178,7 @@ export function FileUploader() {
             Tarik & lepas file di sini
           </p>
           <p className="mt-1 text-xs font-medium text-zinc-500">
-            atau <span className="text-primary font-bold">pilih dari perangkat</span> · maks 500 MB
+            atau <span className="text-primary font-bold">pilih dari perangkat</span> · maks 1 GB
           </p>
         </div>
         <input

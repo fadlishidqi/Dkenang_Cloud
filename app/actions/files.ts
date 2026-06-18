@@ -25,7 +25,7 @@ import {
   isR2Configured,
 } from "@/lib/r2";
 
-const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
+const MAX_UPLOAD_BYTES = 1024 * 1024 * 1024; // 1 GB
 
 export type CreateUploadUrlInput = {
   fileName: string;
@@ -57,7 +57,7 @@ export async function createUploadUrlAction(
   }
 
   if (input.size > MAX_UPLOAD_BYTES) {
-    return { ok: false, error: "Ukuran file melebihi batas 500 MB." };
+    return { ok: false, error: "Ukuran file melebihi batas 1 GB." };
   }
 
   const key = buildStorageKey(fileName);
