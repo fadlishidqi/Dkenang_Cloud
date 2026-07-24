@@ -17,11 +17,15 @@ function createAdapter() {
   // idle connections drop fast — Supavisor multiplexes the real Postgres ones.
   // PrismaPg does not cache prepared statements by default, which is exactly
   // what the transaction pooler needs.
+  // Hand idle connections back to Supavisor quickly: a serverless instance is
+  // usually done well before 10s, and every connection it keeps parked is one
+  // the next cold instance can't get. The connect timeout stays short so a
+  // saturated pooler surfaces as a fast error instead of a gateway timeout.
   return new PrismaPg({
     connectionString,
     max: 3,
-    idleTimeoutMillis: 10_000,
-    connectionTimeoutMillis: 10_000,
+    idleTimeoutMillis: 2_000,
+    connectionTimeoutMillis: 5_000,
   });
 }
 

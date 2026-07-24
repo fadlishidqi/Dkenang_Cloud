@@ -4,58 +4,66 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toaster";
 
-type Counts = {
+type Signature = {
   files: number;
   notes: number;
+  lastLogId: string | null;
 };
 
-const STORAGE_KEY = "dkenang:last-counts";
-
-function readStoredCounts(): Counts | null {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Counts) : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStoredCounts(counts: Counts) {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(counts));
-}
-
-export function NotificationWatcher({ interval = 5000 }: { interval?: number }) {
+/**
+ * Single poller for the whole dashboard. It only calls `router.refresh()` when
+ * the server signature actually moved, so an idle tab costs one tiny request
+ * per interval instead of a full re-render of every route segment.
+ */
+export function NotificationWatcher({
+  interval = 30_000,
+}: {
+  interval?: number;
+}) {
   const router = useRouter();
-  const latestCounts = useRef<Counts | null>(null);
+  const latest = useRef<Signature | null>(null);
+  const inFlight = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
+    let timer: number | undefined;
 
-    async function checkCounts() {
+    async function check() {
+      // A hidden tab has nothing to show the user, and every poll we skip is a
+      // serverless invocation plus three DB round trips we don't pay for.
+      if (document.visibilityState === "hidden" || inFlight.current) {
+        return;
+      }
+
+      inFlight.current = true;
+
       try {
         const response = await fetch("/api/notifications/counts", {
           cache: "no-store",
         });
 
-        if (!response.ok) {
+        if (!response.ok || !isMounted) {
           return;
         }
 
-        const counts = (await response.json()) as Counts;
+        const next = (await response.json()) as Signature;
+
         if (!isMounted) {
           return;
         }
 
-        const previous = latestCounts.current ?? readStoredCounts();
-        latestCounts.current = counts;
-        writeStoredCounts(counts);
+        const previous = latest.current;
+        latest.current = next;
 
+        // The first poll only establishes a baseline: the page was just server
+        // rendered, so its data already matches. Refreshing here would repeat
+        // work we just finished, on every single page load.
         if (!previous) {
           return;
         }
 
-        const newFiles = counts.files - previous.files;
-        const newNotes = counts.notes - previous.notes;
+        const newFiles = next.files - previous.files;
+        const newNotes = next.notes - previous.notes;
 
         if (newFiles > 0) {
           toast({
@@ -71,20 +79,57 @@ export function NotificationWatcher({ interval = 5000 }: { interval?: number }) 
           });
         }
 
-        if (newFiles > 0 || newNotes > 0) {
+        // Refresh on any movement, not just additions — edits and deletes leave
+        // the counts alone and only show up as a new audit log id.
+        const changed =
+          next.files !== previous.files ||
+          next.notes !== previous.notes ||
+          next.lastLogId !== previous.lastLogId;
+
+        if (changed) {
           router.refresh();
         }
       } catch {
-        // Polling notification should stay silent when the connection is flaky.
+        // Polling should stay silent when the connection is flaky.
+      } finally {
+        inFlight.current = false;
       }
     }
 
-    void checkCounts();
-    const timer = window.setInterval(checkCounts, interval);
+    function start() {
+      if (timer === undefined) {
+        timer = window.setInterval(check, interval);
+      }
+    }
+
+    function stop() {
+      if (timer !== undefined) {
+        window.clearInterval(timer);
+        timer = undefined;
+      }
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        // Catch up right away so coming back to the tab feels instant.
+        void check();
+        start();
+      } else {
+        stop();
+      }
+    }
+
+    if (document.visibilityState === "visible") {
+      void check();
+      start();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       isMounted = false;
-      window.clearInterval(timer);
+      stop();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [interval, router]);
 

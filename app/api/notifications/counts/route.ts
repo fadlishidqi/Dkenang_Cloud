@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/session";
-import { getDashboardCounts } from "@/lib/dashboard-data";
+import { getNotificationSignature } from "@/lib/dashboard-data";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ export async function GET() {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const counts = await getDashboardCounts();
+  const signature = await getNotificationSignature();
 
-  return Response.json(counts);
+  return Response.json(signature);
 }

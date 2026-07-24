@@ -1,7 +1,6 @@
 import { getRecentNotes } from "@/lib/dashboard-data";
 import { NoteForm } from "./note-form";
 import { NoteCard } from "./note-card";
-import { RealtimeSync } from "@/components/realtime-sync";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, PenLine } from "lucide-react";
@@ -21,7 +20,6 @@ export default async function NotesPage({ searchParams }: NotesPageProps) {
 
   return (
     <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
-      <RealtimeSync />
       <section className="min-w-0 space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">

@@ -11,6 +11,25 @@ export async function getDashboardCounts() {
   return { files, notes };
 }
 
+/**
+ * Cheap change-detection token for the client poller. The audit log id covers
+ * edits and deletes, which the two counts alone would miss — it rides the
+ * `createdAt` index, so this stays three small queries no matter how much the
+ * tables grow.
+ */
+export async function getNotificationSignature() {
+  const [files, notes, lastLog] = await Promise.all([
+    prisma.file.count(),
+    prisma.note.count(),
+    prisma.auditLog.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    }),
+  ]);
+
+  return { files, notes, lastLogId: lastLog?.id ?? null };
+}
+
 export async function getStorageUsage() {
   const result = await prisma.file.aggregate({
     _sum: {

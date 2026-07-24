@@ -5,7 +5,6 @@ import { Clock, Activity, ChevronDown } from "lucide-react";
 import { FormattedDate } from "@/components/formatted-date";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RealtimeSync } from "@/components/realtime-sync";
 
 type Log = {
   id: string;
@@ -34,7 +33,6 @@ export function ActivityLog({ initialLogs }: { initialLogs: Log[] }) {
         </div>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col p-4 pt-0 sm:p-6 sm:pt-0">
-        <RealtimeSync interval={3000} />
         <div className="space-y-4 flex-1">
           {visibleLogs.map((log) => (
             <div key={log.id} className="flex items-start gap-3">
